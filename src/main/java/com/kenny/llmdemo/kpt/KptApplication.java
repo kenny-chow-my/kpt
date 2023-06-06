@@ -8,7 +8,9 @@ public class KptApplication {
 
 	public static void main(String[] args) {
 		System.out.println("Hello World");
-		SpringApplication.run(KptApplication.class, args);
+		SpringApplication application = new SpringApplication(KptApplication.class);
+		application.run(args);
+
 	}
 
 }
