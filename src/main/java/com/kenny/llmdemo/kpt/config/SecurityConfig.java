@@ -21,10 +21,24 @@ public class SecurityConfig {
         OidcUserService googleUserService = new OidcUserService();
         googleUserService.setAccessibleScopes(googleScopes);
 
-        http.authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest()
-                        .authenticated())
-                .oauth2Login(oauthLogin -> oauthLogin.userInfoEndpoint()
+        http.csrf().disable()
+                .authorizeRequests()
+                .requestMatchers("/translate/**").permitAll()
+                .requestMatchers("/language-pair/**").permitAll()
+                .requestMatchers("/user/**").authenticated()
+                .anyRequest().permitAll();
+
+        http.oauth2Login(oauthLogin -> oauthLogin.userInfoEndpoint()
                         .oidcUserService(googleUserService));
         return http.build();
+
+//        http.authorizeRequests(authorizeRequests -> authorizeRequests
+//                        .antMatchers("/translate/**")
+//
+//                        .anyRequest()
+//                        .authenticated())
+//                .oauth2Login(oauthLogin -> oauthLogin.userInfoEndpoint()
+//                        .oidcUserService(googleUserService));
+//        return http.build();
     }
 }

@@ -1,0 +1,89 @@
+---
+openapi: 3.0.0
+info:
+  title: KPT Demo Translation API
+  description: A set of APIs to help with translations
+  contact:
+    email: kptdemo@zyden.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/swaggerhub.zyden.com/kptdemoapi/1.0.0
+  description: API for KPT Demo
+paths:
+  /language-pair:
+    get:
+      summary: Gets all the available language pairs
+      description: |
+        List all the available language pairs. If query parameter is provided, it filters only the pairs with the selected language.
+      operationId: listLanguagePair
+      parameters:
+      - name: language
+        in: query
+        description: pass an optional language code string for looking up only language pairs containing the language. Language code must be in ISO 639-1.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "All language pairs, or search results matching criteria"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LanguagePair'
+        "400":
+          description: bad input parameter
+  /translate:
+    post:
+      summary: perform a translation
+      description: Translate text from source to target language
+      operationId: translate
+      requestBody:
+        description: Inventory item to add
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Translate'
+      responses:
+        "200":
+          description: translated text
+        "400":
+          description: "invalid input, object invalid"
+components:
+  schemas:
+    LanguagePair:
+      required:
+      - id
+      - sourceLanguage
+      - targetLanguage
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        sourceLanguage:
+          type: string
+          example: en
+        targetLanguage:
+          type: string
+          example: es
+    Translate:
+      required:
+      - languagePairId
+      - translateText
+      type: object
+      properties:
+        languagePairId:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        translateText:
+          type: string
+          example: This is an example text to translate from English
