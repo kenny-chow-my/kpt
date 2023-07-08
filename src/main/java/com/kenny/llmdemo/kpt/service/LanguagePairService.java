@@ -4,6 +4,7 @@ import com.kenny.llmdemo.kpt.model.LanguagePair;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -40,13 +41,9 @@ public class LanguagePairService {
                     return lp.getId().equals(id);
                 }).
                 findFirst().orElse(null);
-        if(found != null){
-            return found.getSourceLanguage();
-        }
-        else{
-            //always mock to english
-            return "en";
-        }
+
+        return found == null ? null : found.getSourceLanguage();
+
     }
 
     public String getTargetLanguage(UUID id){
@@ -56,12 +53,7 @@ public class LanguagePairService {
                     return lp.getId().equals(id);
                 }).
                 findFirst().orElse(null);
-        if(found != null){
-            return found.getTargetLanguage();
-        }
-        else{
-            //always mock to english
-            return "en";
-        }
+
+        return found == null ? null : found.getTargetLanguage();
     }
 }
