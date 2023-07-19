@@ -77,3 +77,4 @@ secrets.yml
 
 #personal keys
 src/main/resources/application-personal.yml
+src/main/resources/application.yml
