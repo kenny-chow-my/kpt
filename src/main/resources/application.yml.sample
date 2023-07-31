@@ -9,6 +9,7 @@ logging:
     httpclient.wire: DEBUG
 spring:
   security:
+    cors-allow-origin: *
     oauth2:
       client:
         registration:
