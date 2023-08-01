@@ -9,14 +9,25 @@ logging:
     httpclient.wire: DEBUG
 spring:
   security:
-    cors-allow-origin: *
+    cors-allow-origin: "*"
     oauth2:
       client:
         registration:
           google:
             client-id: [GOOGLE_CLIENT_ID]
             client-secret: [GOOGLE_CLIENT_SECRET]
-
+  h2:
+    console:
+      enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: none
+  datasource:
+    url: jdbc:h2:mem:library
+    username: sa
+    password: sa
+    driver-class-name: org.h2.Driver
 openai:
   model: gpt-3.5-turbo
   http-client:
