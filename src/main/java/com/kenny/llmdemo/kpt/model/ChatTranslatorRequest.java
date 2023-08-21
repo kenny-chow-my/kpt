@@ -21,10 +21,10 @@ public class ChatTranslatorRequest {
         this.messages = new ArrayList<>();
     }
 
-    public void createMessages(String sourceLanguageName, String targetLanguageName, String sourceText){
-        String systemMessageContent = String.format("You are a language translator from %s to %s", sourceLanguageName, targetLanguageName);
+    public void createMessages(String sourceLanguageName, String targetLanguageName, String persona, String sourceText){
+        String systemMessageContent = String.format("You are a language translator from %s to %s with the persona of %s native speaker", sourceLanguageName, targetLanguageName, persona);
         Message systemMessage = new Message("system", systemMessageContent);
-        Message userMessage = new Message("user", sourceText);
+        Message userMessage = new Message("user", "Please translate the following: " + sourceText);
 
         messages.add(systemMessage);
         messages.add(userMessage);

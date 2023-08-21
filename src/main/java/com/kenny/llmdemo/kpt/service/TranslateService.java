@@ -1,21 +1,15 @@
 package com.kenny.llmdemo.kpt.service;
 
 import com.kenny.llmdemo.kpt.client.OpenAIClient;
-import com.kenny.llmdemo.kpt.config.OpenAIConfig;
-import com.kenny.llmdemo.kpt.interceptor.HttpRequestResponseInterceptor;
 import com.kenny.llmdemo.kpt.model.ChatTranslatorRequest;
 import com.kenny.llmdemo.kpt.model.ChatResponse;
 import com.kenny.llmdemo.kpt.model.Translate;
 import com.kenny.llmdemo.kpt.model.TranslateResponse;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.UUID;
 
@@ -23,7 +17,7 @@ import java.util.UUID;
 public class TranslateService {
     private static final Logger logger = LoggerFactory.getLogger(TranslateService.class);
 
-    private LanguagePairService languagePairService;
+    private ConfigService configService;
 
 
     @Autowired
@@ -35,19 +29,21 @@ public class TranslateService {
     private String apiUrl;
 
 
-    public TranslateService(LanguagePairService languagePairService){
-        this.languagePairService = languagePairService;
+    public TranslateService(ConfigService configService){
+        this.configService = configService;
     }
     public TranslateResponse translate(Translate request){
         String s1 = request.getSourceText();
         UUID languagePairId = request.getLanguagePairId();
-        String sourceLanguage = languagePairService.getSourceLanguage(languagePairId);
-        String targetLanguage = languagePairService.getTargetLanguage(languagePairId);
+        String sourceLanguage = configService.getSourceLanguage(languagePairId);
+        String targetLanguage = configService.getTargetLanguage(languagePairId);
+        String persona = request.getPersona();
 
         TranslateResponse resp = new TranslateResponse();
         resp.setLanguagePairId(languagePairId);
         resp.setSourceLanguage(sourceLanguage);
         resp.setTargetLanguage(targetLanguage);
+        resp.setPersona(persona);
         resp.setSourceText(s1);
 
         //{
@@ -57,7 +53,7 @@ public class TranslateService {
 
         // create a request
         ChatTranslatorRequest chatRequest = new ChatTranslatorRequest(model);
-        chatRequest.createMessages(sourceLanguage, targetLanguage, s1);
+        chatRequest.createMessages(sourceLanguage, targetLanguage, persona, s1);
         // call the API
         ChatResponse response = openAIClient.chat(chatRequest);
 
