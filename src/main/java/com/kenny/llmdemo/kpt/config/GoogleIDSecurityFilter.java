@@ -59,7 +59,6 @@ public class GoogleIDSecurityFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        log.debug("AuthString: " + authString);
         String idTokenString = authString.substring("Bearer ".length());
         log.debug("OIDC SSO Filter processing request");
         if (idTokenString == null){
