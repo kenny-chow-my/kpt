@@ -1,10 +1,13 @@
 package com.kenny.llmdemo.kpt.config;
 
+import com.kenny.llmdemo.kpt.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +25,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoderFactory;
 import org.springframework.security.oauth2.jwt.JwtException;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -32,20 +36,23 @@ import java.util.Set;
 public class GoogleIDSecurityFilter extends OncePerRequestFilter {
 
     private static final String INVALID_ID_TOKEN_ERROR_CODE = "invalid_id_token";
+    private UserService userService;
 
     private JwtDecoderFactory<ClientRegistration> jwtDecoderFactory = new OidcIdTokenDecoderFactory();
 
     private ClientRegistrationRepository clientRegistrationRepository;
 
-    public GoogleIDSecurityFilter(ClientRegistrationRepository clientRegistrationRepository)
+
+    public GoogleIDSecurityFilter(ClientRegistrationRepository clientRegistrationRepository, UserService userService)
     {
         this.clientRegistrationRepository = clientRegistrationRepository;
+        this.userService = userService;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String authString = request.getHeader("Authorization").substring("Bearer ".length());
+        String authString = request.getHeader("Authorization");
 
         if(authString == null){
             log.debug("Missing Authorization header. Not performing any token processing.");
@@ -60,10 +67,8 @@ public class GoogleIDSecurityFilter extends OncePerRequestFilter {
             return;
         }
 
-        log.debug("Getting google client registration");
         ClientRegistration clientRegistration = this.clientRegistrationRepository.findByRegistrationId("google");
 
-        log.debug("Parsing received id_token");
         JwtDecoder jwtDecoder = this.jwtDecoderFactory.createDecoder(clientRegistration);
         Jwt jwt;
         try {
@@ -78,17 +83,13 @@ public class GoogleIDSecurityFilter extends OncePerRequestFilter {
         log.debug("Creating userinfo");
         OidcUserInfo userInfo = new OidcUserInfo(jwt.getClaims());
 
-        log.debug("Setting authorities");
         Set<GrantedAuthority> authorities = new LinkedHashSet<>();
         authorities.add(new OidcUserAuthority(idToken, userInfo));
 
         String usernameAttribute = clientRegistration.getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
-        log.debug("Username Attribute: {}", usernameAttribute);
 
-        log.debug("Create OidcUser");
         OidcUser oidcUser = new DefaultOidcUser(authorities, idToken, userInfo, usernameAttribute);
 
-        log.debug("Create authResult");
         OidcLoginAuthenticationToken authResult = new OidcLoginAuthenticationToken(oidcUser);
 
         log.debug("Setting Authentication");
@@ -98,6 +99,10 @@ public class GoogleIDSecurityFilter extends OncePerRequestFilter {
     }
 
     protected void onSuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, Authentication authResult) throws IOException {
+        log.debug("Check if user exists");
+
+
+        log.debug("Claims {}", this.userService.getUserClaims());
     }
 
 }

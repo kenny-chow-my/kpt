@@ -34,4 +34,10 @@ public class UserService {
         return userDetails.orElse(null);
 
     }
+
+    public void saveUser(UserDetails userDetails){
+        userDetailRepo.save(userDetails);
+    }
+
+
 }

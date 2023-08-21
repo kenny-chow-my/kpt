@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.kenny.llmdemo.kpt.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -21,9 +22,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 public class SecurityConfig {
 
-
     @Autowired
     private ClientRegistrationRepository clientRegistrationRepository;
+
+    @Autowired
+    private UserService userService;
 
     @Value("${spring.security.cors-allow-origin}")
     private String corsAllowed;
@@ -31,13 +34,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable().cors().and()
-                .addFilterBefore(new GoogleIDSecurityFilter(clientRegistrationRepository), OAuth2LoginAuthenticationFilter.class).
+                .addFilterBefore(new GoogleIDSecurityFilter(clientRegistrationRepository, userService), OAuth2LoginAuthenticationFilter.class).
                 authorizeHttpRequests((authz) -> authz
-                        .requestMatchers("/language-pair/**").permitAll()
+                        .requestMatchers("/config/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()
-                )
-                .oauth2Login();
+                );
         return http.build();
     }
 
