@@ -15,16 +15,19 @@ public class ConfigService {
         lp1.setId(UUID.fromString("a5d2149d-84ed-4977-867a-be1e130fbaf7"));
         lp1.setSourceLanguage("en");
         lp1.setTargetLanguage("id");
+        lp1.setLabel("English to Bahasa Indonesia");
 
         LanguagePair lp2 = new LanguagePair();
         lp2.setId(UUID.fromString("6d65c38b-5a1a-425e-b732-ac39d1bf2a2d"));
         lp2.setSourceLanguage("en");
         lp2.setTargetLanguage("zh");
+        lp2.setLabel("English to Chinese");
 
         LanguagePair lp3 = new LanguagePair();
         lp3.setId(UUID.fromString("cd8b02cd-fc43-491a-9028-4517ed1fd3e9"));
-        lp3.setSourceLanguage("es");
-        lp3.setTargetLanguage("en");
+        lp3.setSourceLanguage("en");
+        lp3.setTargetLanguage("de");
+        lp3.setLabel("English to German");
 
         List<LanguagePair> lpList = List.of(lp1, lp2,lp3);
         return lpList;
@@ -49,7 +52,25 @@ public class ConfigService {
                 "Polite, professional formal business speaker",
                 "polite, professional and formal business");
 
-        List<Persona> personaList = List.of(p1, p2, p3);
+        Persona p4 = new Persona(UUID.fromString("370D4475-621B-4943-91CE-3F94535482F5"),
+                false,
+                "5 years old child",
+                "Speak like a 5 years old child in Singapore",
+                "5 years old child in a Kindergarten in Singapore");
+
+        Persona p5 = new Persona(UUID.fromString("370D4475-621B-4943-91CE-3F94535482F5"),
+                false,
+                "8 years old child",
+                "Speak like an 8 years old child in Singapore",
+                "8 years old child in Primary 2 of Singapore");
+
+        Persona p6 = new Persona(UUID.fromString("370D4475-621B-4943-91CE-3F94535482F5"),
+                false,
+                "15 years old teenager",
+                "Speak like a 15 years old teenager in Singapore",
+                "15 years old teenager in a secondary school of Singapore");
+
+        List<Persona> personaList = List.of(p1, p2, p3, p4, p5, p6);
         return personaList;
     }
 
