@@ -8,6 +8,16 @@ WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 
+# Use ARG to declare build-time variables
+ARG GOOGLE_ID
+ARG GOOGLE_SECRET
+ARG OPENAI_KEY
+
+# Set the environment variable inside the container
+ENV GOOGLE_ID=$GOOGLE_ID
+ENV GOOGLE_SECRET=$GOOGLE_SECRET
+ENV OPENAI_KEY=$OPENAI_KEY
+
 # Build the project using Maven
 RUN mvn clean install
 
