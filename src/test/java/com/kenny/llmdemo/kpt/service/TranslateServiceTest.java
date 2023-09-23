@@ -26,6 +26,7 @@ class TranslateServiceTest {
         UUID languagePairId = request.getLanguagePairId();
         String sourceLanguage = "English";
         String targetLanguage = "Chinese";
+        String label = "English to Chinese";
 
         TranslateResponse resp = new TranslateResponse();
         resp.setLanguagePairId(languagePairId);
