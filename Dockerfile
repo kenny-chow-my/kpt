@@ -1,26 +1,3 @@
-# Use a base image with Java and Maven pre-installed
-FROM maven:3-amazoncorretto-17 AS builder
-
-# Set the working directory in the container
-WORKDIR /app
-
-# Copy the project's pom.xml and other necessary files to the container
-COPY pom.xml .
-COPY src ./src
-
-# Use ARG to declare build-time variables
-ARG GOOGLE_ID
-ARG GOOGLE_SECRET
-ARG OPENAI_KEY
-
-# Set the environment variable inside the container
-ENV GOOGLE_ID=$GOOGLE_ID
-ENV GOOGLE_SECRET=$GOOGLE_SECRET
-ENV OPENAI_KEY=$OPENAI_KEY
-
-# Build the project using Maven
-RUN mvn clean install
-
 # Use a lightweight JRE base image to run the application
 FROM amazoncorretto:17-alpine-jdk
 
@@ -28,7 +5,7 @@ FROM amazoncorretto:17-alpine-jdk
 WORKDIR /app
 
 # Copy the built JAR file from the builder stage to the final image
-COPY --from=builder /app/target/kpt-0.0.1-SNAPSHOT.jar ./app.jar
+COPY target/kpt-0.0.1-SNAPSHOT.jar ./app.jar
 
 ENV GOOGLE_ID=${GOOGLE_ID}
 ENV GOOGLE_SECRET=${GOOGLE_SECRET}
